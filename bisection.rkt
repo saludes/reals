@@ -1,24 +1,26 @@
 #lang racket
-(require "interval.rkt")
+; (require "interval.rkt")
 (require racket/generator)
 (provide bisect)
-(define (bisect p iv)
-  (let* ([a (interval-inf iv)]
-         [b (interval-sup iv)]
-         [c (interval-mid iv)])
+
+(define (mid I)
+  (/ (+ (car I) (cdr I)) 2))
+
+(define (bisect-one p iv)
+  (let* ([a (car iv)]
+         [b (cdr iv)]
+         [m (mid iv)])
     (cond
-      [(equal? (p a) (p c)) (interval c b)]
-      [(equal? (p c) (p b)) (interval a c)]
+      [(xor (p a) (p m)) (cons a m)]
+      [(xor (p m) (p b)) (cons m b)]
       [else (error "invalid interval: ~e" iv)])))
 
 
-(define (iterate f i0) (generator ()
-  (let loop ([i i0])
-    (begin
-      (yield i)
-      (loop (f i))))))
-
-   
+(define (bisect p I0)
+  (generator ()
+             (let loop ([I I0])
+               (yield I)
+               (loop (bisect-one p I))))) 
     
 
   
