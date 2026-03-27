@@ -3,7 +3,7 @@
 (require test-engine/racket-tests)
 (require "bisection.rkt")
 (provide dsqrt2 dsquare-root dcube-root)
-(provide stream-radix stream-exp stream-digits)
+(provide digits-to)
 
 (define (find-valid-interval p)
   (let loop ([B 1] [e 0])
