@@ -3,6 +3,8 @@
 (require racket/generator)
 (provide bisect-one bisect forever-do)
 (provide interval-size interval-mid interval-hull)
+(provide is-cut?)
+         
 
 (define (interval-mid I)
   (/ (+ (car I) (cdr I)) 2))
@@ -16,6 +18,9 @@
   (cons
    (apply min cars)
    (apply max cdrs))))
+
+(define (is-cut? I p)
+  (xor (p (car I)) (p (cdr I))))
 
 
 (define (bisect-one p iv)

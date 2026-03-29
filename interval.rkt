@@ -31,6 +31,12 @@
 
 (define (interval-width iv) (- (interval-sup iv) (interval-inf iv)))
 (define (interval-mid iv) (/ (+ (interval-inf iv) (interval-sup iv)) 2))
+
+(define (interval-hull I J)
+  (cons
+   (min (car I) (car J))
+   (max (cdr I) (cdr J))))
+
 (define (interval+ i . is)
   (let (
         [infs (map interval-inf (cons i is))]
@@ -52,9 +58,6 @@
   (let ([inf (apply fi (map interval-inf ivs))]
         [sup (apply fs (map interval-sup ivs))])
     (interval inf sup)))
-
-(define (interval-hull i . is)
-  (interval-operate min max (cons i is)))
 
 (define (interval-cut i . is)
   (let ([ic (interval-operate max min (cons i is))])
