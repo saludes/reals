@@ -16,11 +16,6 @@
 ;; Decimal streams
 
 (struct stream (radix exp digits))
-(define (interval-decimate I)
-  (define dx (/ (interval-size I) 10))
-  (define (scale t) (+ (car I) (* t dx)))
-  (for/list ([i (in-range 10)])
-    (cons (scale i) (scale (add1 i)))))
 
 
 (define (decide p I) (xor (p (car I)) (p (cdr I))))
@@ -80,7 +75,6 @@
          ;(when (zero? (- N j)) (display #\.))))))
   
      
-  
 
 
 ;; Examples
