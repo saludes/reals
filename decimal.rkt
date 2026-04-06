@@ -1,6 +1,8 @@
 #lang racket
 (require "bisection.rkt" racket/generator)
-(provide number->10 10/ 10sqrt)
+(provide number->10 10/
+         10sqrt dsqrt
+         10->intervals)
 
 
 (define (interval-decimate I)
@@ -76,6 +78,28 @@
              #:when (<= (f d) n))
     d))
 
+;; Square root by cut
+
+(define (find-cut p I)
+  (let* ([x0 (car I)]
+        [dx (/ (interval-size I) 10)]
+        [scale (λ (t) (+ x0 (* dx t)))])
+    (for/last ([j (in-range 10)])
+      #:final (xor (p (scale j)) (p (scale (add1 j))))
+      (cons (scale j) (scale (add1 j))))))
+
+(define (dsqrt x)
+  (unless (> x 0)
+    (error "must be positive" x))
+  (define sqrt1
+    (curry find-cut (λ (y) (> (sqr y) x))))
+  (forever-do sqrt1 (cons 0 (max 1 x))))
+    
+        
+
+
+
+
 
 ;; Square root as in 
 ;; https://www.wikihow.com/Calculate-a-Square-Root-by-Hand
@@ -108,7 +132,26 @@
 
 
 
+(module+ test
+  (require rackunit)
+   (define-check (check-small? I e)
+    (unless (<= (interval-size I) e)
+      (fail-check
+       (format "size is ~a must be ~a"
+               (exact->inexact (interval-size I))
+               e))))
+  (define-simple-check (check-wraps? I f y)
+    (check-true (is-cut? I (λ (x) (< (f x) y)))))
 
+  (let* ([y 12]
+         [g (dsqrt y)]
+         [Ifinal (for/last ([j (in-range 100)])(g))])
+    (check-small? Ifinal 1e-95)
+    (check-wraps? Ifinal sqr y))
+  )
+
+  
+  
   
   
 
